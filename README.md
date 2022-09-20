@@ -1,3 +1,3 @@
 # Summary
 
-An overly simple tool for testing if a website it up or down.
+An overly simple tool for testing if a website is up or down.
