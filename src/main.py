@@ -9,7 +9,19 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('homepage/index.html')
+    CHECK = 'https://gitea.local.timmybtech.com'
+    try:
+        response = requests.head(CHECK)
+        logger.info(f'Check sent for { CHECK }')
+    except Exception as e:
+        return render_template('homepage/index.html', check = CHECK, message = 'EXCEPTION!')
+    else:
+        if response.status_code == 200:
+            return render_template('homepage/index.html', check = CHECK, message = 'UP!')
+        if response.status_code == 301:
+            return render_template('homepage/index.html', check = CHECK, message = 'Moved Permenantly')
+        else:
+            return render_template('homepage/index.html', check = CHECK, message = 'DOWN!')
 
 @app.route('/website', methods=['POST'])
 def website():
