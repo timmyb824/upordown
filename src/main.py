@@ -1,45 +1,76 @@
 import requests
 import logging
 from flask import Flask, render_template, request, redirect, url_for
+from multiprocessing.dummy import Pool as ThreadPool
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(name)s %(levelname)s:%(message)s')
 logger = logging.getLogger(__name__)
 
+checkurls = {
+"Homelab": [
+        "https://duplicati.local.timmybtech.com",
+        "https://gitea.local.timmybtech.com",
+        "https://doesnotexist.bbc.co.uk",
+        "https://grafana.local.timmybtech.com",
+        "https://speedtest.local.timmybtech.com",
+        "https://code-server.local.timmybtech.com"
+        ]
+}
+
+def get_status_code(url):
+    try:
+        status_code = requests.head(url).status_code
+        return status_code
+    except requests.ConnectionError:
+        return 'UNREACHABLE'
+
+def url_status_code(url):
+    try:
+        if requests.head(url).status_code == 200 or 302 or 301:
+            return str(get_status_code(url))
+        else:
+            return 'UNREACHABLE'
+    except Exception:
+        return 'UNREACHABLE'
+
+def multi_url_status_code():
+    statuses = {}
+    temp_url_list = []
+    temp_status_list = []
+    for group, urls in checkurls.items():
+        for url in urls:
+            temp_url_list.append(url)
+
+    pool = ThreadPool(10)
+    temp_status_list = pool.map(url_status_code,temp_url_list)
+    for i in range(len(temp_url_list)):
+        statuses[temp_url_list[i]] = temp_status_list[i]
+    return statuses.items()
+
 app = Flask(__name__)
 
 @app.route('/')
-def index():
-    CHECK = 'https://gitea.local.timmybtech.com'
-    try:
-        response = requests.head(CHECK)
-        logger.info(f'Check sent for { CHECK }')
-    except Exception as e:
-        return render_template('homepage/index.html', check = CHECK, message = 'EXCEPTION!')
-    else:
-        if response.status_code == 200:
-            return render_template('homepage/index.html', check = CHECK, message = 'UP!')
-        if response.status_code == 301:
-            return render_template('homepage/index.html', check = CHECK, message = 'Moved Permenantly')
-        else:
-            return render_template('homepage/index.html', check = CHECK, message = 'DOWN!')
+def homepage():
+    status_list = list(multi_url_status_code())
+    return render_template('index/homepage.html', statuses = status_list, checkurls = checkurls)
 
 @app.route('/website', methods=['POST'])
 def website():
-    URL = request.form['website']
+    website = request.form['website']
     try:
-        response = requests.head(URL)
-        logger.info(f'Request sent for { URL }')
+        response = requests.head(website)
+        logger.info(f'Request sent for { website }')
     except Exception as e:
-        logger.error(f'Request sent for { URL } resulted in an exception: {str(e)}')
-        return render_template('url/website.html', message = f"is down due to: {str(e)}", url = URL)
+        logger.error(f'Request sent for { website } resulted in an exception: {str(e)}')
+        return render_template('url/website.html', message = f"is down due to: {str(e)}", website = website)
     else:
         if response.status_code == 200:
-            logger.info(f'Request sent for { URL } was successful')
-            return render_template('url/website.html', message = "is UP!", url = URL)
+            logger.info(f'Request sent for { website } was successful')
+            return render_template('url/website.html', message = "is UP!", website = website)
         if response.status_code == 301:
-            logger.warning(f'Request sent for { URL } resulted in a {response.status_code}')
-            return render_template('url/website.html', message = f"returned an HTTP response code {response.status_code}. Try again with or without 'www'.", url = URL)
+            logger.warning(f'Request sent for { website } resulted in a {response.status_code}')
+            return render_template('url/website.html', message = f"returned an HTTP response code {response.status_code}. Try again with or without 'www'.", website = website)
         else:
-            return render_template('url/website.html', message = f"appears down due to: HTTP response code {response.status_code}", url = URL)
+            return render_template('url/website.html', message = f"appears down due to: HTTP response code {response.status_code}", website = website)
 
 # app.run(host='0.0.0.0', port=5001, debug=True)

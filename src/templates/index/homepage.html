@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Simple Up or Down Tool</h1>
+<form action="/website" method="post">
+  <input
+    placeholder="website"
+    name="website"
+    type="url"
+    style="Width: 525px;"
+  />
+</br>
+  <button type="submit">submit</button>
+</form>
+</br>
+</br>
+<h2>Configured Hosts Checks</h2>
+        {% for key, value in statuses %}
+          {% if value == "200" or value == "302" %}
+          <p>{{ key }} <font color="green"> UP!</font></p>
+          {% else %}
+          <p>{{ key }} <font color="red"> {{ value }}</font></p>
+        {% endif %}
+      {% endfor %}
+    </p>
+{% endblock %}
