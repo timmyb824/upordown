@@ -3,8 +3,8 @@ module.exports = {
     {
         name: 'upordown',
         script: ' gunicorn main:app -w 2 --bind 127.0.0.1:5001; ',
-        cwd: '/Users/timothybryant/DevOps-Personal/git-personal/upordown/src', //mac
-        // cwd: '/home/tbryant/DevOps-WSL/gitea/upordown/src', //WSL
+        // cwd: '/Users/timothybryant/DevOps-Personal/git-personal/upordown/src', //mac
+        cwd: '/home/tbryant/DevOps-WSL/git-personal/upordown/src', //WSL
         watch: false,
         // args: 'one two',
         // merge_logs: true,
