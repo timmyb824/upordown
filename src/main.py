@@ -1,30 +1,28 @@
 import requests
 import logging
 from flask import Flask, render_template, request
-from multiprocessing.dummy import Pool as ThreadPool
+import concurrent.futures
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(name)s %(levelname)s:%(message)s')
 logger = logging.getLogger(__name__)
 
-checkurls = {
-"Websites": [
+checkurls = [
         "https://www.google.com",
         "https://www.msn.com",
         "https://doesnotexist.bbc.co.uk",
         "https://www.yahoo.com"
-        ]
-}
+]
 
-def get_status_code(url):
+def get_status_code(url, timeout = 10):
     try:
-        status_code = requests.head(url).status_code
+        status_code = requests.get(url, timeout = timeout).status_code
         return status_code
     except requests.ConnectionError:
         return 'UNREACHABLE'
 
-def url_status_code(url):
+def url_status_code(url, timeout = 10):
     try:
-        if requests.head(url).status_code == 200 or 302 or 301:
+        if requests.get(url, timeout = timeout).status_code == 200 or 302 or 301:
             return str(get_status_code(url))
         else:
             return 'UNREACHABLE'
@@ -35,12 +33,11 @@ def multi_url_status_code():
     statuses = {}
     temp_url_list = []
     temp_status_list = []
-    for group, urls in checkurls.items():
-        for url in urls:
-            temp_url_list.append(url)
+    for url in checkurls:
+        temp_url_list.append(url)
 
-    pool = ThreadPool(10)
-    temp_status_list = pool.map(url_status_code,temp_url_list)
+    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+        temp_status_list = list(executor.map(url_status_code,temp_url_list))
     for i in range(len(temp_url_list)):
         statuses[temp_url_list[i]] = temp_status_list[i]
     return statuses.items()
