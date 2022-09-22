@@ -28,4 +28,4 @@ def test_url_status_code_bad():
 
 def test_multiple_url_status_code():
     status_items = list(multi_url_status_code())
-    assert status_items == [('https://duplicati.local.timmybtech.com', '302'), ('https://gitea.local.timmybtech.com', '200'), ('https://doesnotexist.bbc.co.uk', 'UNREACHABLE'), ('https://grafana.local.timmybtech.com', '302'), ('https://speedtest.local.timmybtech.com', '200'), ('https://code-server.local.timmybtech.com', '302')]
+    assert status_items == [('https://www.google.com', '200'), ('https://www.msn.com', '200'), ('https://doesnotexist.bbc.co.uk', 'UNREACHABLE'), ('https://www.yahoo.com', '200')]

@@ -7,13 +7,11 @@ logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(name)s %(levelnam
 logger = logging.getLogger(__name__)
 
 checkurls = {
-"Homelab": [
-        "https://duplicati.local.timmybtech.com",
-        "https://gitea.local.timmybtech.com",
+"Websites": [
+        "https://www.google.com",
+        "https://www.msn.com",
         "https://doesnotexist.bbc.co.uk",
-        "https://grafana.local.timmybtech.com",
-        "https://speedtest.local.timmybtech.com",
-        "https://code-server.local.timmybtech.com"
+        "https://www.yahoo.com"
         ]
 }
 
