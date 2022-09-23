@@ -1,5 +1,5 @@
 import pytest
-from src.main import get_status_code, url_status_code, multi_url_status_code
+from src.helpers.status_codes import get_status_code, url_status_code, multi_url_status_code
 
 def test_homepage(client):
     response = client.get('/')
