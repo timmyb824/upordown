@@ -1,7 +1,14 @@
 {% extends "base.html" %} {% block content %}
 <a href="/">Back</a>
-<p>
-    <span id="website" style="color:#ffb300; font-weight:bold">{{ website }}</span>
-    <span id="message">{{ message }}</span>
-</p>
+    {% if message == 'UP!'%}
+        <p>
+            <span id="website" style="color:#ffb300; font-weight:bold">{{ website }}</span>
+            <span id="message" style="color:green; font-weight:bold">{{ message }}</span>
+        </p>
+    {% else %}
+        <p>
+            <span id="website" style="color:#ffb300; font-weight:bold">{{ website }}</span>
+            <span id="message" style="color:red; font-weight:bold">{{ message }}</span>
+        </p>
+    {% endif %}
 {% endblock %}

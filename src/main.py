@@ -51,21 +51,11 @@ def homepage():
 
 @app.route('/website', methods=['POST'])
 def website():
-    website_check = request.form['website']
-    try:
-        response = requests.head(website_check)
-        logger.info(f'Request sent for { website_check }')
-    except Exception as e:
-        logger.error(f'Request sent for { website_check } resulted in an exception: {str(e)}')
-        return render_template('website/website.html', message = f"is down due to: {str(e)}", website = website_check)
+    website = request.form['website']
+    website_check = url_status_code(request.form['website'])
+    if website_check != 'UNREACHABLE':
+        return render_template('website/website.html', website = website, message = "UP!")
     else:
-        if response.status_code == 200:
-            logger.info(f'Request sent for { website_check } was successful')
-            return render_template('website/website.html', message = "is UP!", website = website_check)
-        if response.status_code == 301:
-            logger.warning(f'Request sent for { website_check } resulted in a {response.status_code}')
-            return render_template('website/website.html', message = f"returned an HTTP response code {response.status_code}. Try again with or without 'www'.", website = website_check)
-        else:
-            return render_template('website/website.html', message = f"appears down due to: HTTP response code {response.status_code}", website = website_check)
+        return render_template('website/website.html', website = website, message = website_check)
 
 # app.run(host='0.0.0.0', port=5001, debug=True)
