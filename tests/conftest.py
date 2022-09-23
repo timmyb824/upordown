@@ -1,5 +1,6 @@
 import pytest
-from src.main import app
+from src.upordown.main import app
+# import src
 
 @pytest.fixture
 def client():

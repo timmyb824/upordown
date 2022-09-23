@@ -1,6 +1,6 @@
 import concurrent.futures
 import requests
-from helpers.settings import checkurls
+from src.upordown.settings import checkurls
 
 def get_status_code(url, timeout = 10):
     try:
