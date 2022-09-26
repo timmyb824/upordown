@@ -2,6 +2,8 @@ from flask import Flask, render_template, request
 from src.upordown.status_codes import url_status_code, multi_url_status_code
 import logging, logging.config
 # import traceback
+from datetime import datetime
+from pytz import timezone
 
 logging.config.fileConfig('./src/upordown/configs/logging.ini', disable_existing_loggers=False)
 logger = logging.getLogger(__name__)
@@ -12,7 +14,10 @@ app = Flask(__name__)
 def homepage():
     status_list = list(multi_url_status_code())
     logger.info(f'Request sent for { status_list }')
-    return render_template('home/homepage.html', statuses = status_list)
+    tz = timezone('America/New_York')
+    now = datetime.now(tz)
+    last_updated = now.strftime("%Y-%m-%d %H:%M:%S")
+    return render_template('home/homepage.html', statuses = status_list, time = last_updated)
 
 @app.route('/website', methods=['POST'])
 def website():
