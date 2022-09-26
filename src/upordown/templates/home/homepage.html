@@ -14,6 +14,7 @@
 </br>
 </br>
 <h2>Configured Hosts Checks</h2>
+<p><font style="color:grey; font-weight:bold; font-size: 26px">Last updated: <u>{{ time }}</u></font></p>
         {% for key, value in statuses %}
           {% if value == "200" or value == "302" %}
           <p>{{ key }} <font color="green"> UP!</font></p>
@@ -21,5 +22,8 @@
           <p>{{ key }} <font color="red"> {{ value }}</font></p>
         {% endif %}
       {% endfor %}
-    </p>
+</br>
+<form action="/" method="GET">
+<button>re-check</button>
+</form>
 {% endblock %}
